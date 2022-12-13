@@ -18,6 +18,8 @@ package com.example.android.dessertclicker
 
 import android.content.ActivityNotFoundException
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -25,11 +27,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import com.example.android.dessertclicker.databinding.ActivityMainBinding
-
+const val TAG = "MainActivity"
+const val KEY_REVENUE = "revenue_key"
+const val KEY_DESSERTS_SOLD = "desserts_sold_key"
 class MainActivity : AppCompatActivity() {
 
     private var revenue = 0
     private var dessertsSold = 0
+
+
 
     // Contains all the views
     private lateinit var binding: ActivityMainBinding
@@ -69,6 +75,10 @@ class MainActivity : AppCompatActivity() {
         binding.dessertButton.setOnClickListener {
             onDessertClicked()
         }
+        if (savedInstanceState != null){
+            revenue = savedInstanceState.getInt(KEY_REVENUE,0)
+            dessertsSold = savedInstanceState.getInt(KEY_DESSERTS_SOLD,0)
+        }
 
         // Set the TextViews to the right values
         binding.revenue = revenue
@@ -76,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+
     }
 
     /**
@@ -93,6 +104,46 @@ class MainActivity : AppCompatActivity() {
         // Show the next dessert
         showCurrentDessert()
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG,"onResume called")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"onStart called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG,"onStop called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG,"onDestroy called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG,"onRestart called")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(KEY_REVENUE,revenue)
+        outState.putInt(KEY_DESSERTS_SOLD,dessertsSold)
+
+        showCurrentDessert()
+    }
+
 
     /**
      * Determine which dessert to show.
@@ -127,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                 .intent
         try {
             startActivity(shareIntent)
+
         } catch (ex: ActivityNotFoundException) {
             Toast.makeText(this, getString(R.string.sharing_not_available),
                     Toast.LENGTH_LONG).show()
